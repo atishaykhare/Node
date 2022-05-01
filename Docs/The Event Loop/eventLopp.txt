@@ -1,0 +1,48 @@
+That event loop is in the end a loop which is run or started by nodejs that keeps the nodejs process running
+and as I just mentioned, that handles all the callbacks and it has a certain order in which it goes through the callbacks.
+
+So basically it's a loop that just well keeps on looping unsurprisingly, at the beginning of each new iteration it checks if there are any timer callbacks it
+should execute. We haven't set up any timers yet but basically there is set timeout and set interval,
+
+you might know this from frontend javascript too, there these methods also exist. Now in nodejs you can also set a timer and basically you set a timer and always pass a method, a function that should be executed
+once that timer completes and nodejs is aware of this and at the beginning of each new loop iteration, it executes any due timer callbacks,
+so any callbacks that have to be executed because a timer completes. Then as a next step, it checks other callbacks,
+
+for example if we had write or read file, we might have a callback because that operation finished and it will then also execute these callbacks.
+Now be aware that with IO here, I mean generally any input output operations that typically is file operations but can also be network operations and in general, I'm talking about blocking long taking
+operations.
+
+Now it's important to understand that nodejs will leave that phase at a certain point of time and that can also mean that if there are too many outstanding callbacks, it will continue its loop iteration and
+postpone these callbacks to the next iteration to execute them. After working on these open callbacks and hopefully finishing them all,
+
+it will enter a pull phase. The pull phase is basically a phase where nodejs will look for new IO events and basically do its best to execute their callbacks immediately if possible.
+
+Now if that's not possible, it will defer the execution and basically register this as a pending callback, so this is how that works.
+
+Important, it also will check if there are any timer callbacks due to be executed and if that is the case, it will jump to that timer phase and execute them right away,
+
+so it can actually jump back there and not finish the iteration otherwise it will continue
+
+and next set immediate callbacks will be executed in a so-called check phase. Set immediate is a bit like set timeout or set interval, just that it will execute immediately but always after any open callbacks
+
+have been executed, so typically faster than set timeout with one millisecond of open duration, let's say but after the current cycle
+well finished or at least finished open callbacks that were due to be handled in that current iteration.
+
+And now we're entering a highly theoretical terrain and I don't want to dive too deep into that, though you will find a couple of resources that do dive
+deeper at the end of this module in case you want to join the nodejs team and really dive super hardcore into this.
+
+Now we're nearing the end of each iteration cycle and now nodejs will execute all close event callbacks, so if you registered any close events and in our code, we haven't
+but if you had any close events, this would be the point of time where nodejs executes their appropriate callbacks.
+
+So roughly spoken, we have timer callbacks, we then have any IO related callbacks and other event callbacks and set immediate followed by close event callbacks,
+
+so close events are basically handled separately or their callbacks are handled separately we should say. Well and then we might exit the whole nodejs program but only if there are no remaining event
+
+handlers which are registered and that is what I mean with this refs equal null thing here. Internally nodejs keeps track of its open event listeners and it basically has a counter, references or refs
+
+which it increments by 1 for every new callback that is registered, every new event listener that is registered so every new future work that it has to do
+you could say and it reduces that counter by 1 for every event listener that it doesn't need anymore, every callback it finished and since in a server environment
+we create a server with create server and then listen to incoming requests with listen, this is an event which never is finished by default and therefore, we always have at least one reference
+
+and therefore we don't exit in a normal node web server program. We can call the exit function as you already saw and if we do anything else like at the beginning of the course when we just used node to execute a file
+that did not listen to a web server or on a web server, then it also finishes eventually once its done with its work.

@@ -31,9 +31,9 @@ function reqListener(req, res) {
             return res.end();
         })
     }
-    res.statusCode = 302;
-    res.setHeader('Location', '/')
-    return res.end();
+    // res.statusCode = 302;
+    // res.setHeader('Location', '/')
+    // return res.end();
 
 }
 

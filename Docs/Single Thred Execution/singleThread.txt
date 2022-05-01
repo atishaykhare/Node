@@ -1,0 +1,36 @@
+So in our node application we have our code and one important thing to understand and to really keep in mind is that nodejs uses only one single javascript thread,
+a thread is basically like a process in your operating system you could say. So it's only using that one thread and the obvious question is how is it then able to handle multiple
+requests because if we're not able to assign a new thread for each request, they ultimately end up all running in one on the same thread and this of course poses a security question,
+can you then access data from request A, from request B and most importantly here at this point when we talk about performance, there of course also is the question of does this not mean that if the
+request A is still doing work, request B can't be handled? Well both is taken care of nodejs.
+
+and at this point of time here, I want to focus on the performance question though I'll also briefly touch on the security question. Now let's start with the performance.
+
+Let's say we have some code which accesses the file system as we already did in this course too. Now working with files often is a task that takes longer because files can be very big and it doesn't necessarily complete instantly,
+
+therefore if we're doing this upon an incoming request, a second request might have to wait because we're not able to handle it yet or it even gets declined, so basically our webpage is down for that user.
+
+Now one important construct I already mentioned is that event loop, the event loop is automatically started by nodejs when your program starts, you don't have to do that explicitly,
+nodejs does that when well it basically starts running code.
+
+This is responsible for handling event callbacks though, so all these nice functions we basically added thus far in create server for example, the event loop is responsible for basically running that code when a certain event occurs you could say,
+it's aware of all these callbacks and basically well, execute said code. That doesn't help us with our long taking file operation though and
+it's important to understand that this operation is not handled by the event loop, just the callback that we might have defined on write file
+once it's done, that code will be handled in event loop but that code will finish fast,
+
+so basically the event loop will only handle callbacks that contain fast finishing code.
+
+Instead our file system operation and a couple of other long taking operations are sent to a worker pool which is also spun up and managed by nodejs automatically.
+
+This worker pool is responsible for all the heavy lifting, this worker pool is kind of totally detached of your javascript code you could say and it runs on different
+threads, it can spin up multiple threads, it's closely intervened with your operating system you're running the app on,
+
+so this is really detached from your code and this worker pool is therefore doing all the heavy lifting.
+
+If you're doing something with a file, well a worker from that pool will take care and will do its job totally detached from your code and from the request and from the event loop. The one connection to the event loop
+
+we will have though is that once the worker is done, so for example once we read a file, it will trigger the callback for that read file operation and since the event loop is responsible for the events and the callbacks, this will in
+
+the end end up in the event loop, so there nodejs will then basically execute the appropriate callback.
+
+Now this is a lot of behind the scenes stuff which is nice to know, you don't have to write any code to make this work, this is all built into nodejs

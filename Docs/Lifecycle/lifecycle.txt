@@ -1,0 +1,105 @@
+we executed that file with node app.js
+
+because our file was named app.js and this essentially started the script where nodejs went through
+
+the entire file, parsed the code, registered the variables and functions and so on,
+
+so it basically read our entire code and started executing it.
+
+But then something important happened,
+
+we never left that program, right.
+
+The reason for this is an important concept in nodejs called the event loop, this is basically
+
+a loop process which is managed by nodejs which keeps on running as long as there is work to do
+
+you could say, it keeps on running as long as there are event listeners registered and one event listener
+
+we did register and we never unregistered is that incoming request listener we passed or we set up with
+
+the help of create server.
+
+We passed a function to create server
+
+and that is basically an ongoing event
+
+listener, one we didn't unregister from and we shouldn't because our server should of course stay up
+
+and running.
+
+So our core node application basically is managed by this event loop, all our code is managed by this
+
+and as I mentioned, nodejs uses such an event driven approach for all kinds of stuff, not just for managing
+
+that server but that is of course a crucial part
+
+but you will see it a lot throughout this course,
+
+for example when we later access a database, you will see that there we also basically send that please
+
+insert some data request and then we register some function that should be executed
+
+once it's done. And nodejs uses this pattern because it actually executes single threaded javascript. So the
+
+entire node process basically uses one thread on our computer it's running on.
+
+Now as you might guess if we create a server with nodejs, it should of course be able to handle multiple,
+
+thousands, tens of thousands or hundreds of thousands of incoming requests
+
+and if it would always pause and then do something with that request, this would not be that great
+
+hence it uses this event loop concept where in the end it always keeps on running and just executes
+
+code when a certain event occurs
+
+so that in general it's always available. And whilst this might still sound like ok but if I got two incoming
+
+requests, it needs to handle two events,
+
+well it is super fast in handling these requests and actually behind the scenes, it does some multi-threading
+
+by leveraging the operating system. But this event loop is a core thing you have to keep in mind that
+
+nodejs basically has an ongoing loop as long as there are listeners and create server creates a listener
+
+which never stops
+
+but if you eventually were to unregister and you can do this with process.exit, it would end and
+
+we can see that too.
+
+If we go back to our code and after this line, we type process.exit and execute this function and
+
+we clear our console and we now repeat node
+
+app.js, you see
+
+it's now still running because this function never executed,
+
+we had no incoming request yet. But if we now reload this page, localhost 3000, you see we still log
+
+that request but then we're back in a new line in the terminal because now it did quit that process,
+
+it didn't before but now it did.
+
+It did quit that process with the help of process.exit.
+
+Now typically you don't call that in your code because you don't want to quit your server, if it quits
+
+people will not be able to reach your webpage anymore but this is important for understanding how this
+
+works.
+
+Process.exit basically hard exited our event loop and therefore the program shuts down because there
+
+was no more work to do,
+
+nodejs saw that there is no more work to do
+
+and it basically closed the program and gave control back to our terminal here.
+
+So this is how we execute such a nodejs file and how we generally create such a server and what nodejs
+
+does behind the scenes,

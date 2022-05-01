@@ -1,7 +1,14 @@
 const http = require('http');
 
 function reqListener(req, res) {
-    console.log(req)
+    // console.log(req)
+    /* Request Header do have a very complex object with a lot of information what we really require are url, headers and methods
+    * which can be accessed through
+    * */
+    console.log({url: req.url, method:req.method, headers: req.headers})
+
+
+    // process.exit();
 }
 
 const server = http.createServer(reqListener);

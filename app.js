@@ -8,6 +8,14 @@ function reqListener(req, res) {
     console.log({url: req.url, method:req.method, headers: req.headers})
 
 
+    res.setHeader('Content-Type', 'text/html');   //setting header in response
+
+    res.write('<html>')
+    res.write('<head><title>The end is here</title></head>')
+    res.write('<body><h1>Crawling in my skin, these wounds will not heal!</h1></body>')
+    res.write('</html>')
+
+    res.end();  // the point where u tell to return the response no more write after this otherwise it will give error thant must not change the response after it is ended
     // process.exit();
 }
 
